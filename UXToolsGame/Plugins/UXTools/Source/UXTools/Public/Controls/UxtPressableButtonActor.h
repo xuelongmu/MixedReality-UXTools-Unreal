@@ -17,6 +17,33 @@ class UTextRenderComponent;
 class UAudioComponent;
 
 /**
+ * Structure which contains data representing the appearance of a decal component for labels.
+ */
+USTRUCT(BlueprintType)
+struct UXTOOLS_API FIconImage
+{
+	GENERATED_BODY()
+
+public:
+	/** The material used by the Decal Component */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Uxt Image")
+	UMaterialInterface* Material = nullptr;
+
+	/** The size of the decal component */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Uxt Image")
+	FVector Size = FVector(20, 20, 20);
+
+	/** The default color of the decal. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Uxt Text Brush")
+	FLinearColor DefaultColor = FLinearColor::White;
+
+	/** The disabled color of the decal. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Uxt Text Brush")
+	FLinearColor DisabledColor = FLinearColor(32, 32, 32);
+};
+
+
+/**
  * The default pressable button actor which programmatically builds an actor hierarchy with a back plate, front plate,
  * icon, and label. All button properties within this class are reactive at edit and runtime. This actor also contains
  * behaviors to support icon focus animation and sound playback. This class is extensible to support derived button types.
@@ -55,6 +82,10 @@ public:
 	/** Creates (and initializes) the button's label hierarchy. */
 	UFUNCTION(BlueprintCallable, Category = "Uxt Pressable Button")
 	virtual void ConstructLabel();
+
+	/** Creates (and initializes) the button's label hierarchy. */
+	UFUNCTION(BlueprintCallable, Category = "Uxt Pressable Button")
+	virtual void ConstructImage();
 
 	/** Starts the pulse animation for a given pointer. */
 	UFUNCTION(BlueprintCallable, Category = "Uxt Pressable Button")
@@ -95,6 +126,14 @@ public:
 	/** Applies a new icon brush. */
 	UFUNCTION(BlueprintSetter, Category = "Uxt Pressable Button")
 	void SetIconBrush(const FUxtIconBrush& Brush);
+
+	/** Accessor to the button's icon image. */
+	UFUNCTION(BlueprintGetter, Category = "Uxt Pressable Button")
+	const FIconImage& GetIconImage() const { return IconImage; }
+
+	/** Applies a new icon image. */
+	UFUNCTION(BlueprintSetter, Category = "Uxt Pressable Button")
+	void SetIconImage(const FIconImage& Image);
 
 	/** Accessor to the button's label. */
 	UFUNCTION(BlueprintGetter, Category = "Uxt Pressable Button")
@@ -170,6 +209,10 @@ protected:
 		meta = (EditCondition = "bCanEditIconBrush"))
 	FUxtIconBrush IconBrush;
 
+	/** Structure which contains properties for the button's icon image decal component. */
+	UPROPERTY(EditAnywhere, Category = "Uxt Pressable Button", BlueprintGetter = "GetIconImage", BlueprintSetter = "SetIconImage")
+	FIconImage IconImage;
+
 	/** Localizable text for the label. */
 	UPROPERTY(EditAnywhere, Category = "Uxt Pressable Button", BlueprintGetter = "GetLabel", BlueprintSetter = "SetLabel")
 	FText Label = NSLOCTEXT("PressableButtonActor", "LabelDefault", "16x32x32mm");
@@ -206,6 +249,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Uxt Pressable Button")
 	UTextRenderComponent* IconComponent = nullptr;
 
+	/** Decal component for rendering images. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Uxt Pressable Button")
+	UDecalComponent* IconImageComponent = nullptr;
+
 	/** Label text component. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Uxt Pressable Button")
 	UTextRenderComponent* LabelComponent = nullptr;
@@ -237,4 +284,11 @@ protected:
 	/** Allows derived classes to control if the icon brush can be edited. */
 	UPROPERTY(EditDefaultsOnly, Category = "Uxt Pressable Button")
 	bool bCanEditIconBrush = true;
+
+	/** Controls whether a decal image is used, as an alternative to the icon brush. */
+	UPROPERTY(EditAnywhere, Category = "Uxt Pressable Button")
+	bool bUseDecalImage = false;
+
+	UPROPERTY(Transient)
+	UMaterialInstanceDynamic* IconImageMaterialInstance = nullptr;
 };

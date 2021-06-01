@@ -6,6 +6,7 @@
 #include "UXTools.h"
 
 #include "Components/AudioComponent.h"
+#include "Components/DecalComponent.h"
 #include "Components/TextRenderComponent.h"
 #include "Controls/UxtBackPlateComponent.h"
 #include "Controls/UxtButtonBrush.h"
@@ -124,6 +125,7 @@ AUxtPressableButtonActor::AUxtPressableButtonActor()
 	IconComponent = CreateAndAttachComponent<UTextRenderComponent>(TEXT("Icon"), FrontPlateCenterComponent);
 	IconComponent->SetHorizontalAlignment(EHorizTextAligment::EHTA_Center);
 	IconComponent->SetVerticalAlignment(EVerticalTextAligment::EVRTA_TextCenter);
+	IconImageComponent = CreateAndAttachComponent<UDecalComponent>(TEXT("Image"), FrontPlateCenterComponent);
 	LabelComponent = CreateAndAttachComponent<UTextRenderComponent>(TEXT("Label"), FrontPlateCenterComponent);
 	LabelComponent->SetHorizontalAlignment(EHorizTextAligment::EHTA_Center);
 	LabelComponent->SetVerticalAlignment(EVerticalTextAligment::EVRTA_TextCenter);
@@ -141,6 +143,7 @@ void AUxtPressableButtonActor::OnConstruction(const FTransform& Transform)
 	ConstructVisuals();
 	ConstructIcon();
 	ConstructLabel();
+	ConstructImage();
 }
 
 void AUxtPressableButtonActor::BeginPlay()
@@ -283,6 +286,22 @@ void AUxtPressableButtonActor::ConstructLabel()
 	LabelComponent->SetText(Label);
 }
 
+void AUxtPressableButtonActor::ConstructImage()
+{
+	if (!bUseDecalImage)
+	{
+		IconImageComponent->SetVisibility(false);
+		return;
+	}
+	UE_LOG(LogTemp, Warning, TEXT("Construct Image"));
+	IconImageComponent->SetVisibility(true);
+
+	IconImageComponent->SetDecalMaterial(IconImage.Material);
+	IconImageMaterialInstance = IconImageComponent->CreateDynamicMaterialInstance();
+	IconImageComponent->DecalSize = IconImage.Size;
+	IconImageMaterialInstance->SetVectorParameterValue("Color", IconImage.DefaultColor);
+}
+
 bool AUxtPressableButtonActor::BeginPulse(const UUxtPointerComponent* Pointer)
 {
 	if (IsPulsing() || (Pointer == nullptr))
@@ -344,6 +363,12 @@ void AUxtPressableButtonActor::SetIconBrush(const FUxtIconBrush& Brush)
 {
 	IconBrush = Brush;
 	ConstructIcon();
+}
+
+void AUxtPressableButtonActor::SetIconImage(const FIconImage& Image)
+{
+	IconImage = Image;
+	ConstructImage();
 }
 
 void AUxtPressableButtonActor::SetLabel(const FText& NewLabel)
