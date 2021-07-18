@@ -15,6 +15,7 @@ class UUxtBackPlateComponent;
 class UStaticMeshComponent;
 class UTextRenderComponent;
 class UAudioComponent;
+class UUxtPointerComponent;
 
 /**
  * Structure which contains data representing the appearance of a decal component for labels.

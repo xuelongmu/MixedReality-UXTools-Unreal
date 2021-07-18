@@ -11,6 +11,7 @@
 #include "UxtBasePressableButtonActor.generated.h"
 
 class UUxtPressableButtonComponent;
+class IUxtPokeTarget;
 
 /**
  * Abstract base class for all pressable button actors. Ensures a UUxtPressableButtonComponent as the root component.
