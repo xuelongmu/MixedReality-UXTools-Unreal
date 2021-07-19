@@ -34,6 +34,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Uxt Image")
 	FVector Size = FVector(20, 20, 20);
 
+	/** The center offset of the decal component */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Uxt Image")	
+	FVector Offset = FVector::ZeroVector;
+
+	/** The rotation (around X axis) of the decal component */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Uxt Image")	
+	float RotationX = 0.f;
+
 	/** The default color of the decal. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Uxt Text Brush")
 	FLinearColor DefaultColor = FLinearColor::White;

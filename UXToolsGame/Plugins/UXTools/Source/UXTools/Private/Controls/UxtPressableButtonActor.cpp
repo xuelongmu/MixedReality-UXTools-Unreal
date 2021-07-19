@@ -299,6 +299,10 @@ void AUxtPressableButtonActor::ConstructImage()
 	IconImageComponent->SetDecalMaterial(IconImage.Material);
 	IconImageMaterialInstance = IconImageComponent->CreateDynamicMaterialInstance();
 	IconImageComponent->DecalSize = IconImage.Size;
+	IconImageComponent->SetRelativeLocation(IconImage.Offset);
+	FRotator rot = IconImageComponent->GetRelativeRotation();
+	rot.Roll = IconImage.RotationX;
+	IconImageComponent->SetRelativeRotation(rot);
 	IconImageMaterialInstance->SetVectorParameterValue("Color", IconImage.DefaultColor);
 }
 
